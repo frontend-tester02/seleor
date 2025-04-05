@@ -21,7 +21,7 @@ const RootLayout: FC<ChildPops> = ({ children }) => {
 		<html lang='en'>
 			<body className={`${montserrat.className} antialiased`}>
 				<Navbar />
-				<main className='container max-w-6xl mt-24'>{children}</main>
+				<main className='container max-w-6xl mt-24 mx-auto'>{children}</main>
 				<Toaster />
 			</body>
 		</html>
