@@ -33,9 +33,9 @@ function SignUpPage() {
 	}
 	return (
 		<Card className='w-1/2 p-4'>
-			<h2 className='text-xl font-bold'>Sign In</h2>
+			<h2 className='text-xl font-bold'>Sign Up</h2>
 			<p className='text-sm text-muted-foreground'>
-				Welcome back! Please sign in to your account
+				Welcome back! Please sign up to your account
 			</p>
 			<Separator />
 
