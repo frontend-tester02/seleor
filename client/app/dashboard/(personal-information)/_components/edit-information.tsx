@@ -16,12 +16,10 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog'
 import { Edit2 } from 'lucide-react'
-import { useState } from 'react'
 import FullNameForm from './full-name.form'
 import EmailForm from './email.form'
 
 const EditInformation = () => {
-	const [open, setOpen] = useState(false)
 	return (
 		<>
 			<div className='w-full h-52 bg-secondary flex justify-center items-center'>
