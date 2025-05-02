@@ -4,7 +4,8 @@ import './globals.css'
 import React, { FC } from 'react'
 import { ChildPops } from '@/types'
 import Navbar from '@/components/shared/navbar'
-import { Toaster } from 'sonner'
+import SessionProvider from '@/components/providers/session.provider'
+import { Toaster } from '@/components/ui/sonner'
 
 const montserrat = Montserrat({
 	weight: ['400', '500', '600', '700', '800'],
@@ -18,13 +19,15 @@ export const metadata: Metadata = {
 
 const RootLayout: FC<ChildPops> = ({ children }) => {
 	return (
-		<html lang='en'>
-			<body className={`${montserrat.className} antialiased`}>
-				<Navbar />
-				<main className='container max-w-5xl mt-24 mx-auto'>{children}</main>
-				<Toaster />
-			</body>
-		</html>
+		<SessionProvider>
+			<html lang='en'>
+				<body className={`${montserrat.className} antialiased`}>
+					<Navbar />
+					<main className='container max-w-5xl mt-24 mx-auto'>{children}</main>
+					<Toaster />
+				</body>
+			</html>
+		</SessionProvider>
 	)
 }
 

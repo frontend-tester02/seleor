@@ -4,7 +4,7 @@ const router = require('express').Router()
 
 router.get('/products', userController.getProducts)
 router.get('/product/:id', userController.getProduct)
-router.get('/profile', userController.getProfile)
+router.get('/profile/:id', userController.getProfile)
 router.get('/orders', userController.getOrders)
 router.get('/transactions', userController.getTransactions)
 router.get('/favorites', userController.getFavorites)

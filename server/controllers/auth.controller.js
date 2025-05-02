@@ -4,9 +4,7 @@ class AuthContoller {
 	async login(req, res, next) {
 		try {
 			const { email, password } = req.body
-
 			const user = await userModel.findOne({ email })
-
 			if (!user) {
 				return res.json({ failure: 'User not found' })
 			}
