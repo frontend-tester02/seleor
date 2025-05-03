@@ -1,6 +1,6 @@
 'use client'
 
-import { deleteFile } from '@/actions/user.action'
+import { createProduct, deleteFile } from '@/actions/admin.action'
 import { Button } from '@/components/ui/button'
 import {
 	Form,
@@ -27,19 +27,24 @@ import {
 	SheetTitle,
 } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
+import useAction from '@/hooks/use-action'
 import { useProduct } from '@/hooks/use-product'
 import { categories } from '@/lib/constants'
 import { UploadDropzone } from '@/lib/uploadthing'
 import { formatPrice } from '@/lib/utils'
 import { productSchema } from '@/lib/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PlusCircle, X } from 'lucide-react'
+import { Loader, PlusCircle, X } from 'lucide-react'
 import Image from 'next/image'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 const AddProduct = () => {
+	const { isLoading, setIsLoading, onError } = useAction()
+
 	const { open, setOpen } = useProduct()
+
 	const form = useForm<z.infer<typeof productSchema>>({
 		resolver: zodResolver(productSchema),
 		defaultValues: {
@@ -52,8 +57,26 @@ const AddProduct = () => {
 		},
 	})
 
-	function onSubmit(values: z.infer<typeof productSchema>) {
-		console.log(values)
+	async function onSubmit(values: z.infer<typeof productSchema>) {
+		if (!form.watch('image')) return toast('Please upload an image')
+		setIsLoading(true)
+		const res = await createProduct(values)
+		console.log(res?.serverError)
+
+		if (res?.serverError || res?.validationErrors || !res?.data) {
+			return onError('Something went wrong')
+		}
+
+		if (res.data.failure) {
+			return onError(res.data.failure)
+		}
+
+		if (res.data.status === 201) {
+			toast('Product created successfully')
+			setOpen(false)
+			form.reset()
+			setIsLoading(false)
+		}
 	}
 
 	function onOpen() {
@@ -98,6 +121,7 @@ const AddProduct = () => {
 												<Input
 													placeholder='Write product name...'
 													className='bg-secondary'
+													disabled={isLoading}
 													{...field}
 												/>
 											</FormControl>
@@ -116,6 +140,7 @@ const AddProduct = () => {
 												<Textarea
 													placeholder='Write product description...'
 													className='bg-secondary'
+													disabled={isLoading}
 													{...field}
 												/>
 											</FormControl>
@@ -134,6 +159,7 @@ const AddProduct = () => {
 											<Select
 												onValueChange={field.onChange}
 												defaultValue={field.value}
+												disabled={isLoading}
 											>
 												<FormControl>
 													<SelectTrigger className='bg-secondary w-full'>
@@ -168,6 +194,7 @@ const AddProduct = () => {
 													className='bg-secondary'
 													placeholder='100.000 UZS'
 													type='number'
+													disabled={isLoading}
 													{...field}
 												/>
 											</FormControl>
@@ -209,8 +236,8 @@ const AddProduct = () => {
 									/>
 								)}
 
-								<Button type='submit' className='w-full'>
-									Submit
+								<Button type='submit' className='w-full' disabled={isLoading}>
+									Submit {isLoading && <Loader className='animate-spin' />}
 								</Button>
 							</form>
 						</Form>
