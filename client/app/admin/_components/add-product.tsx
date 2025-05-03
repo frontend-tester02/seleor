@@ -1,5 +1,6 @@
 'use client'
 
+import { deleteFile } from '@/actions/user.action'
 import { Button } from '@/components/ui/button'
 import {
 	Form,
@@ -28,10 +29,12 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { useProduct } from '@/hooks/use-product'
 import { categories } from '@/lib/constants'
+import { UploadDropzone } from '@/lib/uploadthing'
 import { formatPrice } from '@/lib/utils'
 import { productSchema } from '@/lib/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PlusCircle } from 'lucide-react'
+import { PlusCircle, X } from 'lucide-react'
+import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -55,6 +58,12 @@ const AddProduct = () => {
 
 	function onOpen() {
 		setOpen(true)
+	}
+
+	function onDeleteImage() {
+		deleteFile(form.getValues('imageKey'))
+		form.setValue('image', '')
+		form.setValue('imageKey', '')
 	}
 
 	return (
@@ -167,6 +176,38 @@ const AddProduct = () => {
 										</FormItem>
 									)}
 								/>
+
+								{form.watch('image') && (
+									<div className='relative w-full h-[200px] bg-secondary flex justify-center items-center'>
+										<Image
+											src={form.watch('image')}
+											alt='Product image'
+											fill
+											className='object-cover'
+										/>
+
+										<Button
+											size={'icon'}
+											variant={'destructive'}
+											className='absolute right-0 top-0'
+											type='button'
+											onClick={onDeleteImage}
+										>
+											<X />
+										</Button>
+									</div>
+								)}
+								{!form.watch('image') && (
+									<UploadDropzone
+										endpoint={'imageUploader'}
+										onClientUploadComplete={res => {
+											form.setValue('image', res[0].url)
+											form.setValue('imageKey', res[0].key)
+										}}
+										config={{ appendOnPaste: true, mode: 'auto' }}
+										appearance={{ container: { height: 200, padding: 10 } }}
+									/>
+								)}
 
 								<Button type='submit' className='w-full'>
 									Submit
