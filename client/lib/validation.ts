@@ -45,6 +45,12 @@ export const productSchema = z.object({
 	imageKey: z.string(),
 })
 
+export const updateProductSchema = z
+	.object({ id: z.string() })
+	.merge(productSchema)
+
+export const idSchema = z.object({ id: z.string() })
+
 export const passwordSchema = z
 	.object({
 		oldPassword: z

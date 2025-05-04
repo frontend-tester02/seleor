@@ -1,4 +1,5 @@
 'use client'
+import { deleteProduct } from '@/actions/admin.action'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -13,22 +14,45 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import useAction from '@/hooks/use-action'
 import { useProduct } from '@/hooks/use-product'
 import { formatPrice } from '@/lib/utils'
 import { IProduct } from '@/types'
 import Image from 'next/image'
 import { FC } from 'react'
 import NoSSR from 'react-no-ssr'
+import { toast } from 'sonner'
 
 interface Props {
-	product: Partial<IProduct>
+	product: IProduct
 }
 
 const ProductCard: FC<Props> = ({ product }) => {
-	const { setOpen } = useProduct()
+	const { setOpen, setProduct } = useProduct()
+
+	const { isLoading, setIsLoading, onError } = useAction()
 
 	const onEdit = () => {
 		setOpen(true)
+		setProduct(product)
+	}
+
+	async function onDelete() {
+		setIsLoading(true)
+		const res = await deleteProduct({ id: product._id })
+
+		if (res?.serverError || res?.validationErrors || !res?.data) {
+			return onError('Something went wrong')
+		}
+
+		if (res.data.failure) {
+			return onError(res.data.failure)
+		}
+
+		if (res.data.status === 201) {
+			toast('Product deleted successfully')
+			setIsLoading(false)
+		}
 	}
 	return (
 		<div className='border relative flex flex-col justify-between'>
@@ -73,8 +97,10 @@ const ProductCard: FC<Props> = ({ product }) => {
 							</AlertDialogDescription>
 						</AlertDialogHeader>
 						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction>Continue</AlertDialogAction>
+							<AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+							<AlertDialogAction onClick={onDelete} disabled={isLoading}>
+								Continue
+							</AlertDialogAction>
 						</AlertDialogFooter>
 					</AlertDialogContent>
 				</AlertDialog>

@@ -90,15 +90,10 @@ class AdminController {
 		try {
 			const data = req.body
 			const { id } = req.params
-			const userId = this.userId
-			const user = await userModel.findById(userId)
-			if (!user) return res.json({ failure: 'User not found' })
-			if (user.role !== 'admin')
-				return res.json({ failure: 'User is not Admin' })
 			const updateProduct = await productModel.findByIdAndUpdate(id, data)
 			if (!updateProduct)
 				return res.json({ failure: 'Failed while updating product' })
-			return res.json({ success: 'Product updated successfully' })
+			return res.json({ status: 200 })
 		} catch (error) {
 			next(error)
 		}
@@ -127,15 +122,10 @@ class AdminController {
 	async deleteProduct(req, res, next) {
 		try {
 			const { id } = req.params
-			const userId = this.userId
-			const user = await userModel.findById(userId)
-			if (!user) return res.json({ failure: 'User not found' })
-			if (user.role !== 'admin')
-				return res.json({ failure: 'User is not Admin' })
 			const deleteProduct = await productModel.findByIdAndDelete(id)
 			if (!deleteProduct)
 				return res.json({ failure: 'Failed while deleting product' })
-			return res.json({ success: 'Product deleted successfully' })
+			return res.json({ status: 200 })
 		} catch (error) {
 			next(error)
 		}
