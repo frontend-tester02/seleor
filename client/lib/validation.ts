@@ -67,3 +67,11 @@ export const passwordSchema = z
 		message: 'Passwords do not match',
 		path: ['confirmPassword'],
 	})
+
+export const searchParamsSchema = z.object({
+	searchQuery: z.string().optional(),
+	filter: z.string().optional(),
+	category: z.string().optional(),
+	page: z.string().default('1'),
+	pageSize: z.string().default('6'),
+})
