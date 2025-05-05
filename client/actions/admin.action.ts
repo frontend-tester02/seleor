@@ -69,6 +69,7 @@ export const deleteProduct = actionClient
 		revalidatePath('/admin/products')
 		return JSON.parse(JSON.stringify(data))
 	})
+
 export const deleteFile = async (key: string) => {
 	await utapi.deleteFiles(key)
 }
