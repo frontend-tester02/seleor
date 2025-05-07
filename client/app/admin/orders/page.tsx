@@ -43,7 +43,10 @@ const Page: FC<Props> = async props => {
 			<Separator className='my-0.5' />
 
 			<Table>
-				<TableCaption>A list of your recent orders.</TableCaption>
+				{orders && orders.length > 0 && (
+					<TableCaption>A list of your recent orders.</TableCaption>
+				)}
+
 				<TableHeader>
 					<TableRow>
 						<TableHead>Product</TableHead>
