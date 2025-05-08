@@ -8,6 +8,7 @@ import { Button } from '../ui/button'
 import { Heart } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
 import NoSSR from 'react-no-ssr'
+
 interface Props {
 	product: Partial<IProduct>
 }

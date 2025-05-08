@@ -6,6 +6,8 @@ export type SearchParams = Promise<{
 	[key: string]: string | string[] | undefined
 }>
 
+export type Params = Promise<{ productId: string }>
+
 export interface QueryProps {
 	params: string
 	key: string
@@ -18,6 +20,7 @@ export interface ReturnActionType {
 	status: number
 	isNext: boolean
 	products: IProduct[]
+	product: IProduct
 	customers: IUser[]
 	orders: IOrder[]
 	transactions: ITransaction[]
