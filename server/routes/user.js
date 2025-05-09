@@ -13,7 +13,7 @@ router.get('/statistics', userController.getStatistics)
 
 router.post('/add-favorite', userMiddleware, userController.addFavorite)
 
-router.put('/update-profile', userController.updateProfile)
+router.put('/update-profile', userMiddleware, userController.updateProfile)
 router.put('/update-password', userController.updatePassword)
 
 router.delete('/delete-favorite/:id', userController.deleteFavorite)

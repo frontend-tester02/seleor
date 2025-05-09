@@ -130,11 +130,11 @@ class UserController {
 	// [PUT] /user/update-profile
 	async updateProfile(req, res, next) {
 		try {
-			const userId = '680137413804cc1346d471d7'
+			const userId = req.user._id
 			const user = await userModel.findById(userId)
-			user.set(req.body)
-			await user.save()
-			return res.json(user)
+			if (!user) return res.json({ failure: 'User not found' })
+			await userModel.findByIdAndUpdate(userId, req.body)
+			return res.json({ status: 200 })
 		} catch (error) {
 			next(error)
 		}
