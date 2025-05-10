@@ -146,15 +146,16 @@ class UserController {
 	async updatePassword(req, res, next) {
 		try {
 			const { oldPassword, newPassword } = req.body
-			const userId = '680137413804cc1346d471d7'
+			const userId = req.user._id
 			const user = await userModel.findById(userId)
+			if (!user) return res.json({ failure: 'User not found' })
 			const isPasswordMatch = await bcrypt.compare(oldPassword, user.password)
 			if (!isPasswordMatch)
 				return res.json({ failure: 'Old password is incorrect' })
 
 			const hashedPassword = await bcrypt.hash(newPassword, 10)
 			await userModel.findByIdAndUpdate(userId, { password: hashedPassword })
-			return res.json({ success: 'Password updated successfully' })
+			return res.json({ status: 200 })
 		} catch (error) {
 			next(error)
 		}
