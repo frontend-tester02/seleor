@@ -41,6 +41,42 @@ export const getStatistics = actionClient.action<ReturnActionType>(async () => {
 	return JSON.parse(JSON.stringify(data))
 })
 
+export const getOrders = actionClient
+	.schema(searchParamsSchema)
+	.action<ReturnActionType>(async ({ parsedInput }) => {
+		const session = await getServerSession(authOptions)
+		const token = await generateToken(session?.currentUser?._id)
+		const { data } = await axiosClient.get(`/api/user/orders`, {
+			headers: { Authorization: `Bearer ${token}` },
+			params: parsedInput,
+		})
+		return JSON.parse(JSON.stringify(data))
+	})
+
+export const getTransactions = actionClient
+	.schema(searchParamsSchema)
+	.action<ReturnActionType>(async ({ parsedInput }) => {
+		const session = await getServerSession(authOptions)
+		const token = await generateToken(session?.currentUser?._id)
+		const { data } = await axiosClient.get(`/api/user/transactions`, {
+			headers: { Authorization: `Bearer ${token}` },
+			params: parsedInput,
+		})
+		return JSON.parse(JSON.stringify(data))
+	})
+
+export const getFavorites = actionClient
+	.schema(searchParamsSchema)
+	.action<ReturnActionType>(async ({ parsedInput }) => {
+		const session = await getServerSession(authOptions)
+		const token = await generateToken(session?.currentUser?._id)
+		const { data } = await axiosClient.get(`/api/user/favorites`, {
+			headers: { Authorization: `Bearer ${token}` },
+			params: parsedInput,
+		})
+		return JSON.parse(JSON.stringify(data))
+	})
+
 export const addFavorite = actionClient
 	.schema(idSchema)
 	.action<ReturnActionType>(async ({ parsedInput }) => {
@@ -90,5 +126,22 @@ export const updatePassword = actionClient
 				headers: { Authorization: `Bearer ${token}` },
 			}
 		)
+		return JSON.parse(JSON.stringify(data))
+	})
+
+export const deleteFavorite = actionClient
+	.schema(idSchema)
+	.action<ReturnActionType>(async ({ parsedInput }) => {
+		const session = await getServerSession(authOptions)
+		if (!session?.currentUser)
+			return { failure: 'You must be logged in to add a favorite' }
+		const token = await generateToken(session?.currentUser?._id)
+		const { data } = await axiosClient.delete(
+			`/api/user/delete-favorite/${parsedInput.id}`,
+			{
+				headers: { Authorization: `Bearer ${token}` },
+			}
+		)
+		revalidatePath('/dashboard/watch-list')
 		return JSON.parse(JSON.stringify(data))
 	})

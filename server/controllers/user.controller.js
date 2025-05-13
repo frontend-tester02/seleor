@@ -84,7 +84,6 @@ class UserController {
 			else if (filter === 'oldest') sortOptions = { createdAt: 1 }
 
 			const orders = await orderModel.aggregate([
-				{ $match: matchQuery },
 				{
 					$lookup: {
 						from: 'products',
@@ -94,14 +93,14 @@ class UserController {
 					},
 				},
 				{ $unwind: '$product' },
+				{ $match: matchQuery },
 				{ $sort: sortOptions },
 				{ $skip: skipAmount },
 				{ $limit: +pageSize },
 				{
 					$project: {
 						'product.title': 1,
-						'product.category': 1,
-						'product.price': 1,
+
 						createdAt: 1,
 						updatedAt: 1,
 						price: 1,
@@ -121,9 +120,62 @@ class UserController {
 	// [GET] /user/transactions
 	async getTransactions(req, res, next) {
 		try {
-			const userId = '680137413804cc1346d471d7'
-			const transactions = await transactionModel.find({ user: userId })
-			return res.json(transactions)
+			const currentUser = req.user
+			const { filter, searchQuery, page, pageSize } = req.query
+			const skipAmount = (page - 1) * pageSize
+
+			const matchQuery = { user: currentUser._id }
+
+			if (searchQuery) {
+				const escapedSearchQuery = searchQuery.replace(
+					/[.*+?^${}()|[\]\\]/g,
+					'\\$&'
+				)
+				matchQuery.$or = [
+					{ 'product.title': { $regex: new RegExp(escapedSearchQuery, 'i') } },
+				]
+			}
+
+			let sortOptions = { createdAt: -1 }
+			if (filter === 'newest') sortOptions = { createdAt: -1 }
+			else if (filter === 'oldest') sortOptions = { createdAt: 1 }
+
+			const transactions = await transactionModel.aggregate([
+				{ $match: matchQuery },
+				{
+					$lookup: {
+						from: 'products',
+						localField: 'product',
+						foreignField: '_id',
+						as: 'product',
+					},
+				},
+				{ $unwind: '$product' },
+				{ $match: matchQuery },
+				{ $sort: sortOptions },
+				{ $skip: skipAmount },
+				{ $limit: +pageSize },
+				{
+					$project: {
+						'product.title': 1,
+						'product.category': 1,
+						'product.price': 1,
+						amount: 1,
+						state: 1,
+						create_time: 1,
+						perform_time: 1,
+						cancel_time: 1,
+						reason: 1,
+						provider: 1,
+					},
+				},
+			])
+
+			const totalTransactions = await transactionModel.countDocuments(
+				matchQuery
+			)
+			const isNext = totalTransactions > skipAmount + transactions.length
+			return res.json({ transactions, isNext })
 		} catch (error) {
 			next(error)
 		}
@@ -132,9 +184,42 @@ class UserController {
 	// [GET] /user/favorites
 	async getFavorites(req, res, next) {
 		try {
-			const userId = '680137413804cc1346d471d7'
-			const user = await userModel.findById(userId).populate('favorites')
-			return res.json(user.favorites)
+			const currentUser = req.user
+			const { filter, searchQuery, category, page, pageSize } = req.query
+			const skipAmount = (page - 1) * pageSize
+
+			const user = await userModel.findById(currentUser._id)
+			const matchQuery = { _id: { $in: user.favorites } }
+
+			if (searchQuery) {
+				const escapedSearchQuery = searchQuery.replace(
+					/[.*+?^${}()|[\]\\]/g,
+					'\\$&'
+				)
+				matchQuery.$or = [
+					{ title: { $regex: new RegExp(escapedSearchQuery, 'i') } },
+				]
+			}
+
+			if (category === 'All') matchQuery.category = { $exists: true }
+			else if (category !== 'All') {
+				if (category) matchQuery.category = category
+			}
+
+			let sortOptions = { createdAt: -1 }
+			if (filter === 'newest') sortOptions = { createdAt: -1 }
+			else if (filter === 'oldest') sortOptions = { createdAt: 1 }
+
+			const products = await productModel
+				.find(matchQuery)
+				.sort(sortOptions)
+				.skip(skipAmount)
+				.limit(+pageSize)
+
+			const totalProducts = await productModel.countDocuments(matchQuery)
+			const isNext = totalProducts > skipAmount + +products.length
+
+			return res.json({ products, isNext })
 		} catch (error) {
 			next(error)
 		}
@@ -211,12 +296,12 @@ class UserController {
 	// [DELETE] /user/delete-favorite
 	async deleteFavorite(req, res, next) {
 		try {
-			const { id } = req.body
-			const userId = '680137413804cc1346d471d7'
+			const { id } = req.params
+			const userId = req.user._id
 			const user = await userModel.findById(userId)
 			user.favorites.pull(id)
 			await user.save()
-			return res.json({ success: 'Product removed from favorites' })
+			return res.json({ status: 200 })
 		} catch (error) {
 			next(error)
 		}

@@ -29,6 +29,7 @@ export interface ReturnActionType {
 		totalFavorites: number
 		totalTransactions: number
 	}
+	favorites: IProduct[]
 }
 
 export interface IProduct {
