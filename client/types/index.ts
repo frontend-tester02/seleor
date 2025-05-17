@@ -17,6 +17,7 @@ export interface QueryProps {
 export interface ReturnActionType {
 	user: IUser
 	failure: string
+	checkoutUrl: string
 	status: number
 	isNext: boolean
 	products: IProduct[]
