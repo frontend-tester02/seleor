@@ -15,7 +15,7 @@ import { SearchParams } from '@/types'
 import { getOrders } from '@/actions/admin.action'
 import Pagination from '@/components/shared/pagination'
 import { Badge } from '@/components/ui/badge'
-import { formatPrice } from '@/lib/utils'
+import { formatPrice, sliceText } from '@/lib/utils'
 import { format } from 'date-fns'
 
 interface Props {
@@ -69,7 +69,7 @@ const Page: FC<Props> = async props => {
 						orders.map(order => (
 							<TableRow key={order._id}>
 								<TableCell>{order.product.title}</TableCell>
-								<TableCell>{order.user.email}</TableCell>
+								<TableCell>{sliceText(order.user.email, 10)}</TableCell>
 								<TableCell>
 									<Badge variant={'secondary'}>
 										{formatPrice(order.price)}

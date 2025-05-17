@@ -13,7 +13,8 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table'
-import { formatPrice } from '@/lib/utils'
+import { TransactionState } from '@/lib/constants'
+import { cn, formatPrice, getStatusText, getStatusVariant } from '@/lib/utils'
 import { SearchParams } from '@/types'
 import { FC } from 'react'
 
@@ -68,10 +69,22 @@ const Page: FC<Props> = async props => {
 							<TableRow key={transaction._id}>
 								<TableCell>{transaction.product.title}</TableCell>
 								<TableCell>{transaction.user.email}</TableCell>
-								<TableCell>{transaction.state}</TableCell>
+								<TableCell>
+									<Badge variant={getStatusVariant(transaction.state)}>
+										{getStatusText(transaction.state)}
+									</Badge>
+								</TableCell>
 								<TableCell>{transaction.provider}</TableCell>
 								<TableCell className='text-right'>
-									<Badge>{formatPrice(transaction.amount)}</Badge>
+									<Badge
+										variant={'secondary'}
+										className={cn(
+											transaction.state === TransactionState.PaidCanceled &&
+												'text-red-500 font-bold'
+										)}
+									>
+										{formatPrice(transaction.amount)}
+									</Badge>
 								</TableCell>
 							</TableRow>
 						))}
@@ -85,7 +98,9 @@ const Page: FC<Props> = async props => {
 							<TableCell className='text-right'>
 								<Badge>
 									{formatPrice(
-										transactions.reduce((acc, curr) => acc + curr.amount, 0)
+										transactions
+											.filter(c => c.state === TransactionState.Paid)
+											.reduce((acc, curr) => acc + curr.amount, 0)
 									)}
 								</Badge>
 							</TableCell>

@@ -58,3 +58,11 @@ export const adminSidebar = [
 	{ name: 'Orders', icon: Shuffle, route: '/admin/orders' },
 	{ name: 'Payments', icon: Banknote, route: '/admin/payments' },
 ]
+
+
+export const TransactionState = {
+	Paid: 2,
+	Pending: 1,
+	PendingCanceled: -1,
+	PaidCanceled: -2,
+}
