@@ -84,3 +84,7 @@ export const updateUserSchema = z.object({
 	isDeleted: z.boolean().optional(),
 	deletedAt: z.date().optional(),
 })
+
+export const updateStatusSchema = z
+	.object({ status: z.string() })
+	.merge(idSchema)
