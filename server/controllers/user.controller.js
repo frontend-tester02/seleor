@@ -123,7 +123,7 @@ class UserController {
 	async getTransactions(req, res, next) {
 		try {
 			const currentUser = req.user
-			const { filter, searchQuery, page, pageSize } = req.query
+			const { searchQuery, filter, page, pageSize } = req.query
 			const skipAmount = (page - 1) * pageSize
 
 			const matchQuery = { user: currentUser._id }
@@ -143,7 +143,6 @@ class UserController {
 			else if (filter === 'oldest') sortOptions = { createdAt: 1 }
 
 			const transactions = await transactionModel.aggregate([
-				{ $match: matchQuery },
 				{
 					$lookup: {
 						from: 'products',
@@ -176,6 +175,7 @@ class UserController {
 				matchQuery
 			)
 			const isNext = totalTransactions > skipAmount + transactions.length
+
 			return res.json({ transactions, isNext })
 		} catch (error) {
 			next(error)

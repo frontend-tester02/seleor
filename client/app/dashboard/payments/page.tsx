@@ -1,4 +1,4 @@
-import { getTransactions } from '@/actions/admin.action'
+import { getTransactions } from '@/actions/user.action'
 import Filter from '@/components/shared/filter'
 import Pagination from '@/components/shared/pagination'
 import { Badge } from '@/components/ui/badge'
@@ -15,15 +15,14 @@ import {
 import { TransactionState } from '@/lib/constants'
 import { cn, formatPrice, getStatusText, getStatusVariant } from '@/lib/utils'
 import { SearchParams } from '@/types'
+import Image from 'next/image'
 import React, { FC } from 'react'
 
 interface Props {
 	searchParams: SearchParams
 }
-
 const Page: FC<Props> = async props => {
 	const searchParams = await props.searchParams
-
 	const res = await getTransactions({
 		searchQuery: `${searchParams.q || ''}`,
 		filter: `${searchParams.filter || ''}`,
@@ -32,6 +31,7 @@ const Page: FC<Props> = async props => {
 
 	const transactions = res?.data?.transactions
 	const isNext = res?.data?.isNext || false
+
 	return (
 		<>
 			<div className='flex justify-between items-center w-full'>
@@ -39,15 +39,15 @@ const Page: FC<Props> = async props => {
 				<Filter />
 			</div>
 
-			<Separator className='my-0.5' />
+			<Separator className='my-3' />
 
 			<Table className='text-sm'>
 				{transactions && transactions.length > 0 && (
 					<TableCaption>A list of your recent transactions.</TableCaption>
 				)}
-
 				<TableHeader>
 					<TableRow>
+						<TableHead></TableHead>
 						<TableHead>Product</TableHead>
 						<TableHead>Provider</TableHead>
 						<TableHead>Status</TableHead>
@@ -58,16 +58,24 @@ const Page: FC<Props> = async props => {
 					{transactions && transactions.length === 0 && (
 						<TableRow>
 							<TableCell colSpan={4} className='text-center'>
-								No transactions found
+								No transactions found.
 							</TableCell>
 						</TableRow>
 					)}
 					{transactions &&
 						transactions.map(transaction => (
 							<TableRow key={transaction._id}>
+								<TableCell>
+									<Image
+										src={transaction.product.image}
+										alt={transaction.product.title}
+										width={50}
+										height={50}
+									/>
+								</TableCell>
 								<TableCell>{transaction.product.title}</TableCell>
 								<TableCell>
-									<Badge variant={'secondary'} className='capitalize'>
+									<Badge className='capitalize' variant={'secondary'}>
 										{transaction.provider}
 									</Badge>
 								</TableCell>
@@ -91,6 +99,7 @@ const Page: FC<Props> = async props => {
 						))}
 				</TableBody>
 			</Table>
+
 			<Pagination
 				isNext={isNext}
 				pageNumber={searchParams?.page ? +searchParams.page : 1}

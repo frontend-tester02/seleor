@@ -84,13 +84,11 @@ function SignUpPage() {
 		if (res.data.failure) {
 			return onError(res.data.failure)
 		}
-
 		if (res.data.status === 301) {
 			setIsResend(true)
 			setIsLoading(false)
 			toast('OTP was expired. Please resend OTP')
 		}
-
 		if (res.data.status === 200) {
 			const response = await register(form.getValues())
 			if (
@@ -103,7 +101,6 @@ function SignUpPage() {
 			if (response.data.failure) {
 				return onError(response.data.failure)
 			}
-
 			if (response.data.user._id) {
 				toast('User created successfully')
 				signIn('credentials', {
@@ -113,6 +110,7 @@ function SignUpPage() {
 			}
 		}
 	}
+
 	return (
 		<Card className='w-1/2 p-4'>
 			<h2 className='text-xl font-bold'>Sign Up</h2>

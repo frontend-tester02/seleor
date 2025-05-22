@@ -28,10 +28,9 @@ class AuthContoller {
 	async register(req, res, next) {
 		try {
 			const { email, password, fullName } = req.body
+
 			const user = await userModel.findOne({ email })
-			if (user) {
-				return res.json({ failure: 'User already exists' })
-			}
+			if (user) return res.json({ failure: 'User already exists' })
 
 			const hashedPassword = await bcrypt.hash(password, 10)
 			const newUser = await userModel.create({
@@ -42,6 +41,8 @@ class AuthContoller {
 
 			return res.json({ user: newUser })
 		} catch (error) {
+			console.error(error)
+			res.status(500).json({ error: 'Server error', message: error.message })
 			next(error)
 		}
 	}

@@ -58,7 +58,7 @@ export const getTransactions = actionClient
 	.action<ReturnActionType>(async ({ parsedInput }) => {
 		const session = await getServerSession(authOptions)
 		const token = await generateToken(session?.currentUser?._id)
-		const { data } = await axiosClient.get(`/api/user/transactions`, {
+		const { data } = await axiosClient.get('/api/user/transactions', {
 			headers: { Authorization: `Bearer ${token}` },
 			params: parsedInput,
 		})

@@ -37,6 +37,7 @@ const bootstrap = async () => {
 			.catch(err => {
 				console.error('Database connection error:', err)
 			})
+
 		app.listen(PORT, () => console.log(`Server running on ${PORT}`))
 	} catch (error) {
 		console.log('Error connecting to MongoDB', error)
