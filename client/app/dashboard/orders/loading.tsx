@@ -9,13 +9,16 @@ import {
 	TableRow,
 } from '@/components/ui/table'
 import { Loader } from 'lucide-react'
+import { Suspense } from 'react'
 
 const Loading = () => {
 	return (
 		<>
 			<div className='flex justify-between items-center w-full'>
 				<h1 className='text-xl font-bold'>Orders</h1>
-				<Filter />
+				<Suspense>
+					<Filter />
+				</Suspense>
 			</div>
 
 			<Separator className='my-3' />
