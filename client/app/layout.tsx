@@ -6,6 +6,7 @@ import { ChildPops } from '@/types'
 import Navbar from '@/components/shared/navbar'
 import SessionProvider from '@/components/providers/session.provider'
 import { Toaster } from '@/components/ui/sonner'
+import NextTopLoader from 'nextjs-toploader'
 
 const montserrat = Montserrat({
 	weight: ['400', '500', '600', '700', '800'],
@@ -25,6 +26,7 @@ const RootLayout: FC<ChildPops> = ({ children }) => {
 					<Navbar />
 					<main className='container max-w-5xl mt-24 mx-auto'>{children}</main>
 					<Toaster />
+					<NextTopLoader showSpinner={false} />
 				</body>
 			</html>
 		</SessionProvider>

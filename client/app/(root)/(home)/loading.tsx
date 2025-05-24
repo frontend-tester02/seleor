@@ -1,13 +1,16 @@
 import CardLoader from '@/components/loaders/card.loader'
 import Filter from '@/components/shared/filter'
 import { Separator } from '@/components/ui/separator'
+import { Suspense } from 'react'
 
 const Loading = () => {
 	return (
 		<>
 			<div className='flex justify-between items-center'>
 				<h1 className='text-xl font-bold'>Products</h1>
-				<Filter showCategory />
+				<Suspense>
+					<Filter showCategory />
+				</Suspense>
 			</div>
 
 			<Separator className='my-3' />
