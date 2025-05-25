@@ -4,7 +4,7 @@ import Filter from '@/components/shared/filter'
 import Pagination from '@/components/shared/pagination'
 import { Separator } from '@/components/ui/separator'
 import { SearchParams } from '@/types'
-import React, { FC, Suspense } from 'react'
+import React, { FC } from 'react'
 
 interface Props {
 	searchParams: SearchParams
@@ -26,9 +26,7 @@ const HomePage: FC<Props> = async props => {
 		<>
 			<div className='flex justify-between items-center'>
 				<h1 className='text-xl font-bold'>Products</h1>
-				<Suspense>
-					<Filter showCategory />
-				</Suspense>
+				<Filter showCategory />
 			</div>
 
 			<Separator className='my-3' />
